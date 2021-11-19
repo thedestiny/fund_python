@@ -1,0 +1,4 @@
+curl --location --request GET 'http://fund.eastmoney.com/data/rankhandler.aspx?op=ph&dt=fb&sc=clrq&st=desc&pi=1&pn=5000' \
+--header 'Host: fund.eastmoney.com' \
+--header 'Referer: http://fund.eastmoney.com/data/fbsfundranking.html' \
+--header 'Cookie: ASP.NET_SessionId=itqg22hvz45ixuigepbjvvzn'

@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import db_executor as executor
 import re
 
+
 # python 标准解析 "html.parser"
 # lxml html 解析器 lxml
 # lxml xml 解析器  lxm-xml
@@ -45,7 +46,7 @@ def query_fund_basic(code):
     # 3 基金经理
     tmp_list.append(tr_list[10].get_text())
 
-    create_time = tr_list[5].get_text().split("/")[0].strip()\
+    create_time = tr_list[5].get_text().split("/")[0].strip() \
         .replace("年", "").replace("月", "").replace("日", "")
     # 4 创建时间
     tmp_list.append(create_time)
@@ -63,10 +64,17 @@ def query_fund_basic(code):
 
 def update_fund_basic():
     fund_list = executor.query_fund_list()
+    update_sql = "update t_fund_list set fund_company = '{}', fund_manager = '{}', " \
+                 " create_time = '{}' , comp_basic = '{}', index_target = '{}' where `code` = '{}';"
     for code in fund_list:
         result = query_fund_basic(code)
-        print(result)
-
+        company = result[2]
+        manager = result[3]
+        create_time = result[4]
+        comp_basic = result[7]
+        index_target = result[8]
+        sql = update_sql.format(company, manager, create_time, comp_basic, index_target, code)
+        print(sql)
 
 
 if __name__ == '__main__':
@@ -84,6 +92,3 @@ if __name__ == '__main__':
     # print(tb)
     # reslt = str(tb).replace("+", "|")
     # print(reslt)
-
-
-
