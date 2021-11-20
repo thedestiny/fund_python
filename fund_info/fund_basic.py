@@ -62,10 +62,12 @@ def query_fund_basic(code):
     return tmp_list
 
 
+# 更新基金基本信息
 def update_fund_basic():
     fund_list = executor.query_fund_list()
-    update_sql = "update t_fund_list set fund_company = '{}', fund_manager = '{}', " \
+    update_sql = "update tb_fund_list set fund_company = '{}',fund_type = '{}', fund_manager = '{}', " \
                  " create_time = '{}' , comp_basic = '{}', index_target = '{}' where `code` = '{}';"
+    cal_num = 1
     for code in fund_list:
         result = query_fund_basic(code)
         company = result[2]
@@ -73,22 +75,33 @@ def update_fund_basic():
         create_time = result[4]
         comp_basic = result[7]
         index_target = result[8]
-        sql = update_sql.format(company, manager, create_time, comp_basic, index_target, code)
-        print(sql)
+        fund_type = result[6]
+        sql = update_sql.format(company, fund_type, manager, create_time, comp_basic, index_target, code)
+        executor.save_data(sql)
+        cal_num += 1
+        if cal_num % 100 == 0:
+            print("execute id {}".format(cal_num))
+            print(sql)
+
+
+
+# test print 基金信息
+def test_print():
+    code_list = ["005585", "000362", "008412", "008413", "009106", "009107", "007107", "007108"]
+    # 基金代码 基金名称 基金公司 基金经理 创建时间 基金份额 基金类型 业绩基准 跟踪标的
+    head_list = ["code", "name", "company", "manager", "create_time", "fund_share", "fund_type", "comp_basic",
+                 "idx_target"]
+
+    tb = PrettyTable()  # 生成表格对象
+    tb.field_names = head_list  # 定义表头
+    for node in code_list:
+        tb.add_row(query_fund_basic(node))
+    # 输出表格
+    print(tb)
+    reslt = str(tb).replace("+", "|")
+    print(reslt)
 
 
 if __name__ == '__main__':
     print("start analyze !")
     update_fund_basic()
-    # code_list = ["005585", "000362", "008412", "008413", "009106", "009107", "007107", "007108"]
-    # # 基金代码 基金名称 基金公司 基金经理 创建时间 基金份额 基金类型 业绩基准 跟踪标的
-    # head_list = ["code", "name", "company", "manager", "create_time", "fund_share", "fund_type", "comp_basic", "idx_target"]
-    #
-    # tb = PrettyTable()  # 生成表格对象
-    # tb.field_names = head_list  # 定义表头
-    # for node in code_list:
-    #    tb.add_row(query_fund_basic(node))
-    # # 输出表格
-    # print(tb)
-    # reslt = str(tb).replace("+", "|")
-    # print(reslt)

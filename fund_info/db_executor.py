@@ -14,7 +14,7 @@ std_db = pymysql.connect(host=stand_db["host"], port=stand_db["port"], database=
                          password=stand_db["pwd"])
 # 查询 fund list
 def query_fund_list():
-    sql = "select `code` from tb_fund_list"
+    sql = "select `code` from tb_fund_list order by id asc"
     rslt = query_data(sql)
     tmp_list = []
     for node in rslt:

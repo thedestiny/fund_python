@@ -10,8 +10,9 @@ title_list = ["code", "name", "value"]
 
 # 查询基金列表信息
 def query_fund_list(page=1, lx="1"):
-    req_url = "http://fund.eastmoney.com/Data/Fund_JJJZ_Data.aspx?lx={}&sort=zdf,desc&page={},20&onlySale=0"\
+    req_url = "http://fund.eastmoney.com/Data/Fund_JJJZ_Data.aspx?lx={}&sort=zdf,desc&page={},200&onlySale=0"\
         .format(lx, page)
+    print(req_url)
     response = requests.get(req_url)
     # 输出响应头
     # print(response.headers)
@@ -47,9 +48,9 @@ def query_fund_list(page=1, lx="1"):
 # 保存数据列表
 def update_fund_list():
     # 类型的名称
-    lx_list = {"1": ""}
+    lx_list = {"1": "全部"}
     for key, value in lx_list.items():
-        for i in range(1, 50):
+        for i in range(1, 65):
             result = query_fund_list(i, key)
             if result:
               sql_template = "INSERT INTO `tb_fund_list`(`code`, `name`, `fund_type`) VALUES ('{0}','{1}','{2}') " \

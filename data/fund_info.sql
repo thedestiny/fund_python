@@ -19,6 +19,7 @@ CREATE TABLE `tb_fund_list` (
   `price_change` decimal(8,4) DEFAULT '0.0000' COMMENT '价格变动',
   `rate_change` decimal(8,4) DEFAULT '0.0000' COMMENT '变动比例',
   `href` varchar(100) DEFAULT '0' COMMENT '访问链接',
+  `etf_flag` varchar(1) DEFAULT '0' COMMENT 'ETF基金标记',
   `stage_week1` decimal(10,3) DEFAULT '0.000' COMMENT '阶段涨幅-近一周',
   `stage_month1` decimal(10,3) DEFAULT '0.000' COMMENT '阶段涨幅-近一个月',
   `stage_month3` decimal(10,3) DEFAULT '0.000' COMMENT '阶段涨幅-近三个月',
