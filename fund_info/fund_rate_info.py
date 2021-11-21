@@ -8,6 +8,7 @@ import json
 import db_executor as executor
 
 
+
 # 基金变动信息
 # http://fundgz.1234567.com.cn/js/005585.js
 # 基金基变动信息
@@ -42,6 +43,7 @@ def print_table(head, body):
 
 
 #  print(tb)
+
 
 
 # 获取基金基本新
@@ -122,16 +124,18 @@ def query_year_quarter(data_list, num):
 
     return result_map
 
+
 # 处理数字
 def handle(val):
     return val.strip().replace("--", '0')
 
+
 def test_fund_rate():
     query_fund_basic("005585")
 
+
 # 保存基金变动信息
 def update_fund_rate():
-
     sql_template = "update tb_fund_list set stage_week = '{}', stage_month1 = '{}', stage_month3 = '{}', stage_month6 = '{}'," \
                    "stage_year = '{}',stage_year1 = '{}',stage_year2 = '{}',stage_year3 = '{}' where `code` = '{}';"
 
@@ -141,7 +145,8 @@ def update_fund_rate():
         try:
             rate, dic_data = query_fund_basic(node)
             # fund rate
-            sql = sql_template.format(handle(rate[0]), handle(rate[1]), handle(rate[2]), handle(rate[3]), handle(rate[4]),
+            sql = sql_template.format(handle(rate[0]), handle(rate[1]), handle(rate[2]), handle(rate[3]),
+                                      handle(rate[4]),
                                       handle(rate[5]), handle(rate[6]), handle(rate[7]), node)
             # 保存数据
             executor.save_data(sql)
@@ -159,6 +164,8 @@ def update_fund_rate():
         except:
             print("code {} error ".format(node))
 
+
 if __name__ == '__main__':
     print("start analyze !")
     update_fund_rate()
+
