@@ -62,27 +62,6 @@ def query_fund_basic(code):
     return tmp_list
 
 
-# 更新基金基本信息
-def update_fund_basic():
-    fund_list = executor.query_fund_list()
-    update_sql = "update tb_fund_list set fund_company = '{}',fund_type = '{}', fund_manager = '{}', " \
-                 " create_time = '{}' , comp_basic = '{}', index_target = '{}' where `code` = '{}';"
-    cal_num = 1
-    for code in fund_list:
-        result = query_fund_basic(code)
-        company = result[2]
-        manager = result[3]
-        create_time = result[4]
-        comp_basic = result[7]
-        index_target = result[8]
-        fund_type = result[6]
-        sql = update_sql.format(company, fund_type, manager, create_time, comp_basic, index_target, code)
-        executor.save_data(sql)
-        cal_num += 1
-        if cal_num % 100 == 0:
-            print("execute id {}".format(cal_num))
-            print(sql)
-
 
 
 # test print 基金信息
@@ -104,4 +83,4 @@ def test_print():
 
 if __name__ == '__main__':
     print("start analyze !")
-    update_fund_basic()
+    test_print()

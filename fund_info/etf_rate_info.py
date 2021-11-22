@@ -1,12 +1,12 @@
 import requests
 import demjson
-
+import re
 from prettytable import PrettyTable
 import datetime
 # 使用BeautifulSoup解析网页
 from bs4 import BeautifulSoup
 
-invoke_url = "http://fund.eastmoney.com/data/rankhandler.aspx?op=ph&dt=fb&ft=ct&rs=&gs=0&sc=zzf&st=desc&pi=1&pn=50"
+invoke_url = "http://fund.eastmoney.com/data/rankhandler.aspx?op=ph&dt=fb&ft=ct&rs=&gs=0&sc=zzf&st=desc&pi=1&pn=5000"
 headers = {
     'Host': 'fund.eastmoney.com',
     'Referer': 'http://fund.eastmoney.com/data/fbsfundranking.html'
@@ -36,7 +36,7 @@ def query_etf_rate_info():
 
     tb = PrettyTable()  # 生成表格对象
     tb.field_names = head_list  # 定义表头
-
+    pat = re.compile(r'[\u4e00-\u9fa5]+')
     etf_list = []
     for node in json_data:
         node = node[0:-1]
@@ -44,6 +44,9 @@ def query_etf_rate_info():
         code = arr[0]
         name = arr[1]
         fund_type = arr[len(arr) - 1]
+        result = pat.findall(fund_type)
+        if len(result) == 0:
+            fund_type = arr[len(arr) - 2]
         print("code {} name {} type {}".format(code, name, fund_type))
         alias = query_etf_brief(code)
         tmp_list = []
