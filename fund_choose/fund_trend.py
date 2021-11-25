@@ -8,6 +8,12 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 from sklearn import linear_model
 
+# 正常显示 负号
+plt.rcParams["axes.unicode_minus"] = False
+# 正常显示负号标签
+plt.rcParams["font.sans-serif"] = ["SimHei"]
+
+
 # 类型枚举
 # m 一个月 q 3个月 hy 6个月 y 一年
 # try 3年 fiy 5年 sy 今年来 se 最大
@@ -109,7 +115,7 @@ def analyze_fund_info(fundCode):
     print('score: %.3f' % score)
     text = "k={:.6f}\nscore={:.6f}".format(k, score)
     # 添加文字
-    plt.text(x_max * 0.6, y_max * 0.4, text)
+    plt.text(abs(x_max * 0.4), abs(y_max * 0.6), text)
 
     # 添加图例
     plt.legend()
