@@ -26,7 +26,7 @@ def query_fund_price(code):
 
     price_info = "code {} price {} percent {} fund_size {} update_date {}"\
         .format(code, price, price_percent, fund_size, update_date)
-    print(price_info)
+    # print(price_info)
     return update_date, price, price_percent, fund_size
 
 

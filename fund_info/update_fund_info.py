@@ -87,7 +87,7 @@ def update_fund_basic():
         executor.save_data(sql)
         cal_num += 1
         if cal_num % 100 == 0:
-            print("execute id {}".format(cal_num))
+            print("update_fund_basic execute id {}".format(cal_num))
             print(sql)
 
 
@@ -108,8 +108,9 @@ def update_fund_rate():
             # 组装sql模板
             sql = sql_template.format(handle(rate[0]), handle(rate[1]), handle(rate[2]), handle(rate[3]),
                                       handle(rate[4]), handle(rate[5]), handle(rate[6]), handle(rate[7]),
-                                      update_date, price, price_percent, fund_size,
+                                      update_date.replace("-", ""), price, price_percent, fund_size,
                                       node)
+            # print(sql)
             # 保存数据
             executor.save_data(sql)
             # 基金扩展信息
@@ -124,14 +125,14 @@ def update_fund_rate():
                 # print(sql2)
                 executor.save_data(sql2)
         except:
-            print("code {} error ".format(node))
+            print("update_fund_rate code {} error ".format(node))
 
 
 if __name__ == '__main__':
     print("start update fund data!")
     # 更新基金列表信息
-    update_fund_list()
+    # update_fund_list()
     # 更新基金基本信息
-    update_fund_basic()
+    # update_fund_basic()
     # 更新基金变动信息
     update_fund_rate()

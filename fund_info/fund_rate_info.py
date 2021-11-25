@@ -51,7 +51,7 @@ def query_fund_basic(code="005585", hsFlag=False):
     resp = requests.get("http://fundgz.1234567.com.cn/js/{}.js".format(code))
     data = resp.text.replace("jsonpgz(", "").replace(");", "")
     json_body = json.loads(data)
-    print(json_body)
+    # print(json_body)
     # http://fund.eastmoney.com/005585.html
     response = requests.get("http://fund.eastmoney.com/{}.html".format(code))
     response.encoding = "UTF-8"
