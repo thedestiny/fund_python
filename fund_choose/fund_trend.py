@@ -33,7 +33,7 @@ headers = {
 
 
 # 抓取趋势数据
-def query_fund_trend_data(fund_code="011615", idx_code="000300", type="q"):
+def query_fund_trend_data(fund_code="011615", idx_code="000300", type="hy"):
     req_url = address.format(fund_code, idx_code, type)
 
     response = requests.get(req_url, headers=headers, timeout=6000)
@@ -86,37 +86,35 @@ def analyze_fund_info(fundCode):
         time_arr.append(other_time)
         cnt += 1
 
-    x_min, x_max, y_min, y_max = min(x_arr) - 2, max(x_arr) + 2, min(y_arr) - 2, max(y_arr) + 2
-
-    # 设置最大值和最小值区间
-    plt.axis([x_min, x_max, y_min, y_max])
+    # x 数据 和 y 数据
     mat_x = matrix(x_arr)
     mat_y = matrix(y_arr)
 
-    # 展示基金图像
-    plt.plot(mat_x, mat_y, color="darkblue", linewidth=1, linestyle='--', marker='+', label="fund")
-
     model = linear_model.LinearRegression()
-
     model.fit(mat_x, mat_y)
-
-    # 模拟值
-    model_x = mat_x
-    model_y = model.predict(model_x)
-
-    plt.plot(model_x, model_y, 'g-', label="linear")
 
     b = model.intercept_[0]
     # 线性模型的系数
     k = model.coef_[0][0]
+    # 模型的评分系数
     score = model.score(mat_x, mat_y)
     print("k {} b {}".format(k, b))
 
     print('score: %.3f' % score)
     text = "k={:.6f}\nscore={:.6f}".format(k, score)
-    # 添加文字
-    plt.text(abs(x_max * 0.4), abs(y_max * 0.6), text)
+    # 模拟值
+    model_x = mat_x
+    model_y = model.predict(model_x)
 
+    # 计算图形展示的边界
+    x_min, x_max, y_min, y_max = min(x_arr) - 2, max(x_arr) + 2, min(y_arr) - 2, max(y_arr) + 2
+    # 设置最大值和最小值区间
+    plt.axis([x_min, x_max, y_min, y_max])
+    # 展示基金图像
+    plt.plot(mat_x, mat_y, color="darkblue", linewidth=1, linestyle='--', marker='+', label="fund")
+    plt.plot(model_x, model_y, 'g-', label="linear")
+    # 添加文字
+    plt.text(abs(x_max * 0.4), abs(y_max * 0.9), text)
     # 添加图例
     plt.legend()
     plt.show()
@@ -161,7 +159,8 @@ def evaluate_score(rate, level):
 
 if __name__ == '__main__':
 
-    fund_code_list = ["011615"]
+    # 008647 515030
+    fund_code_list = ["008647"]
 
     for node in fund_code_list:
         analyze_fund_info(node)
