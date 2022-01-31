@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 
 
 # 组装参数
-def compose_params(code):
+def compose_params(code, start = "20200101"):
     tmp = ""
     if code.startswith("6"):
         tmp = "1." + code
@@ -17,9 +17,9 @@ def compose_params(code):
         "ut": "fa5fd1943c7b386f172d6893dbfba10b",
         "fields1": "f1,f2,f3,f4,f5,f6",
         "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61",
-        "klt": "102",
+        "klt": "101",
         "fqt": "1",
-        "beg": "20220101",
+        "beg": start,
         "end": "20500101",
         "lmt": "1000000",
     }
@@ -32,8 +32,8 @@ def compose_params(code):
 
 
 # 查询数据
-def query_k_line(code):
-    params = compose_params(code)
+def query_k_line(code, start = "20200101"):
+    params = compose_params(code, start)
     server = "http://54.push2his.eastmoney.com/api/qt/stock/kline/get"
     url = server + "?" + params
     resp = requests.get(url).text
@@ -52,6 +52,8 @@ def query_k_line(code):
 
     print(bt)
     print(kline_data)
+
+    return kline_data
 
 
 if __name__ == '__main__':
