@@ -1,12 +1,7 @@
-import matplotlib.pyplot as plt
-from matplotlib import rc
 import fund_info.stock_k_line as kline
-import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 import pandas as pd
 import talib
-from mplfinance.original_flavor import candlestick_ohlc
 from matplotlib.pyplot import MultipleLocator
 import matplotlib as mpl
 
@@ -27,7 +22,7 @@ def find_support_model(date_list, m5_list, m10_list, m20_list, close_list, resul
     for date, m5, m10, m20 in zip(date_list, m5_list, m10_list, m20_list):
         if cnt > ll_num - 2:
             break
-
+        # 排除不符合条件的数据 数据不能为 None
         if m5 > 0 and m10 > 0 and m20 > 0:
             # 寻找第一个点 5日线上穿10日线
             if last_stage == 0:
@@ -35,8 +30,8 @@ def find_support_model(date_list, m5_list, m10_list, m20_list, close_list, resul
                 if line_cross(m5, m5_next, m10, m10_next) == result_flag:
                     # 已经找到了第一个点
                     last_stage = 1
-                    point1_val = {"close": close_list[cnt], "cnt": cnt, "date": date}
                     cnt = cnt + 1
+                    point1_val = {"close": close_list[cnt], "cnt": cnt, "date": date}
                     continue
 
             # 寻找第2个点 5日线上穿20日线,已经存在 1 点
@@ -45,15 +40,17 @@ def find_support_model(date_list, m5_list, m10_list, m20_list, close_list, resul
                 if line_cross(m5, m5_next, m20, m20_next) == result_flag:
                     # 已经找到了第二个点
                     last_stage = 2
-                    point2_val = {"close": close_list[cnt], "cnt": cnt, "date": date}
                     cnt = cnt + 1
+                    point2_val = {"close": close_list[cnt], "cnt": cnt, "date": date}
                     continue
+
             # 寻找第3个点 10日线上穿20日线,已经存在 2 点
             if last_stage == 2:
                 m10_next, m20_next = m10_list[cnt + 1], m20_list[cnt + 1]
                 if line_cross(m10, m10_next, m20, m20_next) == result_flag:
                     # 已经找到了第三个点
                     last_stage = 3
+                    cnt = cnt + 1
                     point3_val = {"close": close_list[cnt], "cnt": cnt, "date": date}
                     # 打印节点
                     print_node(point1_val, point2_val, point3_val)
@@ -61,18 +58,17 @@ def find_support_model(date_list, m5_list, m10_list, m20_list, close_list, resul
                     last_stage = 0
                     stage_cnt = 0
                     point1_val, point2_val, point3_val = {}, {}, {}
+                    continue
 
-            if last_stage > 0 and stage_cnt < 7:
+            if last_stage > 0 and stage_cnt <= 7:
                 stage_cnt = stage_cnt + 1
-            if stage_cnt > 7:
+            else:
+                # 初始化点位
                 last_stage = 0
                 stage_cnt = 0
+                point1_val, point2_val, point3_val = {}, {}, {}
 
         cnt = cnt + 1
-        # print(date)
-        # print(m5)
-        # print(m10)
-        # print(m20)
 
 
 def print_node(point1, point2, point3):
@@ -128,8 +124,6 @@ if __name__ == '__main__':
     # 每隔30个单位展示一个坐标
     x_major_locator = MultipleLocator(30)
     ax = plt.gca()
-
-    # plt.figure( dpi=48)
     # ax为两条坐标轴的实例
     ax.xaxis.set_major_locator(x_major_locator)
     # 设置 x坐标轴的斜率 和 字体大小
@@ -137,7 +131,8 @@ if __name__ == '__main__':
     plt.yticks(fontsize=15)
 
     # 添加网格，可有可无，只是让图像好看点
-    # plt.grid()
+    plt.grid()
+    # 展示图例，也就是 plot 中的 label 图标展示
     plt.legend()
     # 记得加这一句，不然不会显示图像
     plt.show()
