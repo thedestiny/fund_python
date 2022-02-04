@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
 from matplotlib import rc
 import fund_info.stock_k_line as kline
-import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import pandas as pd
@@ -11,9 +9,6 @@ import matplotlib as mpl
 
 mpl.rcParams['font.sans-serif'] = ["SimHei"]
 mpl.rcParams["axes.unicode_minus"] = False
-# 获取均线的数据，通过timeperiod参数来分别获取 5,10,20 日均线的数据。
-# mpl.rcParams['font.sans-serif'] = ["SimHei"]
-# mpl.rcParams["axes.unicode_minus"] = False
 # 单位是inches
 plt.rcParams['figure.figsize'] = (20.0, 8.0)
 
@@ -23,18 +18,23 @@ def plot_chart(data, title):
     fig.set_size_inches((40, 32))
     # 布林线 left, bottom, width, height
     ax_candle = fig.add_axes((0, 0.8, 1, 0.2))  # 蜡烛图子图即股票k线图
-    ax_macd = fig.add_axes((0, 0.6, 1, 0.2), sharex=ax_candle)  # macd子图
-    ax_rsi = fig.add_axes((0, 0.4, 1, 0.2), sharex=ax_candle)  # rsi子图
-    ax_vol = fig.add_axes((0, 0.2, 1, 0.2), sharex=ax_candle)  # 成交量子图
+    ax_vol = fig.add_axes((0, 0.6, 1, 0.2), sharex=ax_candle)  # macd子图
+    ax_macd = fig.add_axes((0, 0.4, 1, 0.2), sharex=ax_candle)  # rsi子图
+    ax_rsi = fig.add_axes((0, 0.2, 1, 0.2), sharex=ax_candle)  # 成交量子图
     bol_line = fig.add_axes((0, 0.0, 1, 0.2), sharex=ax_candle)  # 布林线
 
-    ohlc = []  # 存放行情数据，candlestick_ohlc需要传入固定格式的数据
+    # 存放行情数据，candlestick_ohlc需要传入固定格式的数据
+    ohlc = []
     row_number = 0
     for date, row in data.iterrows():
         date, highp, lowp, openp, closep = row[:5]
         ohlc.append([row_number, openp, highp, lowp, closep])
         row_number = row_number + 1
 
+    # 将字符串格式日期转换为日期格式
+    data['Date'] = pd.to_datetime(data['Date'])
+    # 将日期列作为行索引
+    # data.set_index(['Date'], inplace=True)
     date_tickers = data.Date.values  # 获取Date数据
 
     def format_date(x, pos=None):
@@ -52,6 +52,7 @@ def plot_chart(data, title):
     ax_candle.plot(data.index, data["ma60"], label="MA60")
     ax_candle.plot(data.index, data["ma120"], label="MA120")
     ax_candle.plot(data.index, data["ma250"], label="MA250")
+
     candlestick_ohlc(ax_candle, ohlc, colorup="r", colordown="g", width=0.8)
 
     ax_candle.xaxis.set_major_formatter(ticker.FuncFormatter(format_date))
