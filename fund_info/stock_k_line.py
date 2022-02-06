@@ -50,8 +50,8 @@ def query_k_line(code, start = "20200101"):
         # 将表格内容放置在 bt 中
         bt.add_row(arr)
 
-    print(bt)
-    print(kline_data)
+    # print(bt)
+    #print(kline_data)
 
     return kline_data
 
