@@ -4,23 +4,20 @@ import demjson
 from prettytable import PrettyTable
 
 
-# 组装参数
-def compose_params(code, start = "20200101"):
-    tmp = ""
+# 参数请求组装
+def compose_params(code, start="20200101", end="20300101", klt="101"):
+    tmp = "0." + code
     if code.startswith("6"):
         tmp = "1." + code
-    else:
-        tmp = "0." + code
-
     prms = {
         "secid": tmp,
         "ut": "fa5fd1943c7b386f172d6893dbfba10b",
         "fields1": "f1,f2,f3,f4,f5,f6",
         "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61",
-        "klt": "101",
+        "klt": klt,
         "fqt": "1",
         "beg": start,
-        "end": "20500101",
+        "end": end,
         "lmt": "1000000",
     }
     result = ""
@@ -32,8 +29,8 @@ def compose_params(code, start = "20200101"):
 
 
 # 查询数据
-def query_k_line(code, start = "20200101"):
-    params = compose_params(code, start)
+def query_k_line(code, start="20200101", end="20300101", klt="101"):
+    params = compose_params(code, start, end, klt)
     server = "http://54.push2his.eastmoney.com/api/qt/stock/kline/get"
     url = server + "?" + params
     resp = requests.get(url).text
@@ -49,13 +46,11 @@ def query_k_line(code, start = "20200101"):
         arr = node.split(",")
         # 将表格内容放置在 bt 中
         bt.add_row(arr)
-
-    # print(bt)
-    #print(kline_data)
-
+    print(bt)
+    print(kline_data)
     return kline_data
 
 
 if __name__ == '__main__':
     print("start capture !")
-    query_k_line("600690")
+    query_k_line("300059")

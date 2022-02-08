@@ -1,4 +1,3 @@
-from matplotlib import rc
 import fund_info.stock_k_line as kline
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -10,18 +9,21 @@ import matplotlib as mpl
 mpl.rcParams['font.sans-serif'] = ["SimHei"]
 mpl.rcParams["axes.unicode_minus"] = False
 # 单位是inches
-plt.rcParams['figure.figsize'] = (20.0, 8.0)
+# plt.rcParams['figure.figsize'] = (20.0, 8.0)
 
 def plot_chart(data, title):
     fig = plt.figure()
     # 创建绘图区，包含四个子图
-    fig.set_size_inches((40, 32))
+    fig.set_size_inches((400, 320))
     # 布林线 left, bottom, width, height
-    ax_candle = fig.add_axes((0, 0.8, 1, 0.2))  # 蜡烛图子图即股票k线图
-    ax_vol = fig.add_axes((0, 0.6, 1, 0.2), sharex=ax_candle)  # macd子图
-    ax_macd = fig.add_axes((0, 0.4, 1, 0.2), sharex=ax_candle)  # rsi子图
-    ax_rsi = fig.add_axes((0, 0.2, 1, 0.2), sharex=ax_candle)  # 成交量子图
-    bol_line = fig.add_axes((0, 0.0, 1, 0.2), sharex=ax_candle)  # 布林线
+    # 股票交易的k线图
+    ax_candle = fig.add_axes((0, 0.72, 1, 0.32))
+    # ax_vol = fig.add_axes((0, 0.6, 1, 0.2), sharex=ax_candle)  # macd子图
+    ax_macd = fig.add_axes((0, 0.48, 1, 0.2), sharex=ax_candle)  # rsi子图
+    ax_rsi = fig.add_axes((0, 0.24, 1, 0.2), sharex=ax_candle)  # 成交量子图
+    bol_line = fig.add_axes((0, 0, 1, 0.2), sharex=ax_candle)  # 布林线
+    # 字体格式
+    font_style = {'font.family': 'SimHei', 'axes.unicode_minus': 'False'}
 
     # 存放行情数据，candlestick_ohlc需要传入固定格式的数据
     ohlc = []
@@ -32,7 +34,7 @@ def plot_chart(data, title):
         row_number = row_number + 1
 
     # 将字符串格式日期转换为日期格式
-    data['Date'] = pd.to_datetime(data['Date'])
+    # data['Date'] = pd.to_datetime(data['Date'])
     # 将日期列作为行索引
     # data.set_index(['Date'], inplace=True)
     date_tickers = data.Date.values  # 获取Date数据
@@ -43,7 +45,8 @@ def plot_chart(data, title):
         # date_tickers 是所有日期的字符串形式列表
         if x < 0 or x > len(date_tickers) - 1:
             return ''
-        return date_tickers[int(x)]
+        rslt = date_tickers[int(x)]
+        return rslt
 
     # 绘制蜡烛图
     ax_candle.plot(data.index, data["ma5"], label="MA5")
@@ -56,7 +59,7 @@ def plot_chart(data, title):
     candlestick_ohlc(ax_candle, ohlc, colorup="r", colordown="g", width=0.8)
 
     ax_candle.xaxis.set_major_formatter(ticker.FuncFormatter(format_date))
-    ax_candle.xaxis.set_major_locator(ticker.MultipleLocator(10))  # 设置间隔为6个交易日
+    ax_candle.xaxis.set_major_locator(ticker.MultipleLocator(15))  # 设置间隔为6个交易日
     ax_candle.grid(True)
     ax_candle.set_title(title, fontsize=10)
     ax_candle.legend()
@@ -69,27 +72,27 @@ def plot_chart(data, title):
     ax_macd.legend()
 
     # 绘制RSI
-    ax_rsi.set_ylabel("(%)")
+    ax_rsi.set_ylabel("(%)", fontsize=40)
     ax_rsi.plot(data.index, [70] * len(data.index), label="overbought")
     ax_rsi.plot(data.index, [30] * len(data.index), label="oversold")
     ax_rsi.plot(data.index, data["rsi"], label="rsi", color='r')
-    ax_rsi.set_title('RSI')
+    ax_rsi.set_title('RSI', fontsize=40)
 
     ax2 = ax_rsi.twinx()
     ax2.plot(data.index, data["Close"], label="价格", color='r')
     ax_rsi.legend()
 
     # 绘制成交量
-    ax_vol.bar(data.index, data["Volume"] / 1000000)
-    ax_vol.set_ylabel("亿元")
+    # ax_vol.bar(data.index, data["Volume"] / 1000000)
+    # ax_vol.set_ylabel("亿元")
 
     # 绘制bool
-    bol_line.set_ylabel("%")
+    bol_line.set_ylabel("%", fontsize=40)
     bol_line.plot(data.index, data["upper"], label="upper")
     bol_line.plot(data.index, data["middle"], label="middle")
     bol_line.plot(data.index, data["lower"], label="lower")
 
-    bol_line.set_title('BOLL')
+    bol_line.set_title('BOLL', fontsize=40)
     bol_line.legend()
 
     # 保存图片到本地
@@ -100,7 +103,7 @@ def plot_chart(data, title):
 
 
 if __name__ == '__main__':
-    line_list = kline.query_k_line("600690", "20210101")
+    line_list = kline.query_k_line("600690", "20211001")
 
     date_list, open_list, close_list, high_list, low_list = [], [], [], [], []
     # 成交量 成交额

@@ -7,20 +7,20 @@ import fund_info.stock_k_line as kline
 
 # 创建策略继承bt.Strategy
 class Strategy001(bt.Strategy):
-    params = dict(period=20, hold=5)
 
+    params = dict(period=20, hold=5)
+    # 打印日志记录
     def log(self, txt, dt=None, doprint=False):
-        ''' 日志函数，用于统一输出日志格式 '''
+        """
+        日志函数，用于统一输出日志格式
+        """
         if doprint:
             dt = dt or self.datas[0].datetime.date(0)
             print('%s, %s' % (dt.isoformat(), txt))
-
+    # 通知订单交易情况
     def notify_order(self, order):
         """
-        订单状态处理
-
-        Arguments:
-            order {object} -- 订单状态
+        通知订单状态
         """
         if order.status in [order.Submitted, order.Accepted]:
             # 如订单已被处理，则不用做任何事情
@@ -54,14 +54,10 @@ class Strategy001(bt.Strategy):
 
         # 订单状态处理完成，设为空
         self.order = None
-
-    # 交易状态通知，一买一卖算交易
+    # 交易状态通知
     def notify_trade(self, trade):
         """
         交易成果
-
-        Arguments:
-            trade {object} -- 交易状态
         """
         if not trade.isclosed:
             return
@@ -71,7 +67,7 @@ class Strategy001(bt.Strategy):
                  (trade.pnl, trade.pnlcomm), doprint=True)
         self.log('交易利润, 毛利润 %.2f, 净利润 %.2f' %
                  (trade.pnl, trade.pnlcomm))
-
+    # 初始化数据
     def __init__(self):
 
         # 初始化相关数据
@@ -105,26 +101,15 @@ class Strategy001(bt.Strategy):
         bt.indicators.SmoothedMovingAverage(rsi, period=10)
         # 平均真实波动范围
         bt.indicators.ATR(self.datas[0], plot=False)
-
+    # 核心的交易策略
     def next(self):
-
-        # 当前时点的前一天的可用现金
-        # self.stats.broker.cash[0]
-        # # 当前时点的前一天的总资产
-        # self.stats.broker.value[0]
-        # 获取当前时刻前一天的收益
-        # self.stats.timereturn.line[0]
-
         # 记录收盘价
         self.log('Close, %.2f' % self.dataclose[0])
-
         # 是否正在下单，如果是的话不能提交第二次订单
         if self.order:
             return
-
         # 是否已经买入
         if not self.position:
-
             # 还没买，如果 MA5 > MA10 说明涨势，买入
             if self.sma5[0] > self.sma10[0]:
                 self.log('buy create, %.2f' % (self.dataclose[0]), doprint=True)
@@ -135,7 +120,7 @@ class Strategy001(bt.Strategy):
             if self.sma5[0] < self.sma10[0]:
                 self.log('sell create, %.2f' % (self.dataclose[0]), doprint=True)
                 self.order = self.sell()
-
+    # 模型回测介绍时打印
     def stop(self):
         self.log(u'(金叉死叉有用吗) Ending Value %.2f' %
                  (self.broker.getvalue()), doprint=True)
@@ -161,47 +146,33 @@ def query_stock_rate(code, start_date="20210101"):
 
     # 组装 dataframe 数据
     data = pd.DataFrame({
-        "Date": date_list,
-        "High": high_list,
-        "Low": low_list,
-        "Open": open_list,
-        "Close": close_list,
-        "Volume": vol_list,
-        "Amount": amt_list
+        "Date": date_list, "High": high_list, "Low": low_list,
+        "Open": open_list, "Close": close_list, "Volume": vol_list, "Amount": amt_list
     })
-
+    # 将字符串设置为日期格式
     data["Date"] = pd.to_datetime(data["Date"])
     # 修改列名并进行替换
     data.rename(
         columns={"Date": "date", "High": "high", "Low": "low", "Close": "close", "Open": "open", "Volume": "volume",
-                 "Amount": "amount"},
-        inplace=True)
+                 "Amount": "amount"}, inplace=True)
     # 添加列
     data["openinterest"] = 0.0
     # 设置日期为索引
     data.set_index(keys=['date'], inplace=True)
-    print(data.head(4))
     # 删除字段
     data.drop(["amount"], inplace=True, axis=1)
+    # 打印数据的前4列，并打印pandas的信息
     print(data.head(4))
     print(data.info())
     # 格式化后的数据
-    format_data = bt.feeds.PandasDirectData(dataname=data,
-                                            # datatime = 1,
-                                            open=3,
-                                            high=1,
-                                            low=2,
-                                            close=4,
-                                            volume=5,
-                                            openinterest=-1,
-                                            fromdate=datetime.datetime(2021, 1, 1),
-                                            todate=datetime.datetime(2022, 2, 2)
+    format_data = bt.feeds.PandasDirectData(dataname=data, open=3, high=1, low=2, close=4, volume=5, openinterest=-1,
+                                            fromdate=datetime.datetime(2021, 1, 1), todate=datetime.datetime(2030, 2, 2)
                                             )
     return format_data
 
 
 if __name__ == '__main__':
-    # 创建引擎对象 stdstats=False
+    # 创建引擎对象
     cerebro = bt.Cerebro()
     # 设置初始资金 1000w
     cerebro.broker.setcash(10_000_000.0)
@@ -211,14 +182,15 @@ if __name__ == '__main__':
     cerebro.broker.setcommission(commission=0.00025)
     # 为Cerebro引擎添加策略
     cerebro.addstrategy(Strategy001)
-
-    format_data = query_stock_rate("600690", "20210101")
+    # 获取历史交易数据
+    format_data = query_stock_rate("300059", "20210101")
     cerebro.adddata(format_data)
-    # print(format_data)
     # 引擎运行前打印期出资金
-    print('组合期初资金: %.2f' % cerebro.broker.getvalue())
+    start_cash = cerebro.broker.getvalue()
+
     cerebro.run()
     # 引擎运行后打期末资金
+    print('组合期初资金: %.2f' % start_cash)
     print('组合期末资金: %.2f' % cerebro.broker.getvalue())
     # 绘图
     # volup voldown 设置成交量在行情上涨和下跌情况下的颜色
