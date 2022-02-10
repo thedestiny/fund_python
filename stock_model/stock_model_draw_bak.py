@@ -1,5 +1,4 @@
-from matplotlib import rc
-import fund_info.stock_k_line as kline
+import stock_info.stock_k_line as kline
 import matplotlib.pyplot as plt
 import pandas as pd
 import talib
@@ -21,7 +20,7 @@ def plot_chart(data, title):
     data.set_index(['Date'], inplace=True)
     # 设置基本参数
     kwargs = dict(
-        type='candle', mav=(5, 10, 20), volume=True, xrotation=15, title='stock %s k线图' % (title),
+        type='candle', mav=(5, 10, 20), volume=True, xrotation=15, title='stock_info %s k线图' % (title),
         ylabel='价格', ylabel_lower='交易量', figratio=(15, 10), figscale=1.5)
 
     # 设置图形的颜色 上涨和下跌的颜色设置

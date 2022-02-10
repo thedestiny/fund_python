@@ -2,7 +2,7 @@ import backtrader as bt
 from backtrader.feeds import PandasData
 import datetime
 import pandas as pd
-import fund_info.stock_k_line as kline
+import stock_info.stock_k_line as kline
 
 if __name__ == '__main__':
     data1 = set(["12"])

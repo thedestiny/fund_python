@@ -2,7 +2,7 @@ import backtrader as bt
 # from backtrader.feeds import PandasData
 import datetime as datetime
 import pandas as pd
-import fund_info.stock_k_line as kline
+import stock_info.stock_k_line as kline
 
 
 # 创建策略继承bt.Strategy

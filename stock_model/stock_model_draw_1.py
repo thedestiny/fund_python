@@ -1,10 +1,7 @@
-from matplotlib import rc
-import fund_info.stock_k_line as kline
+import stock_info.stock_k_line as kline
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 import pandas as pd
 import talib
-from mplfinance.original_flavor import candlestick_ohlc
 import matplotlib as mpl
 import mplfinance as mpf
 # 用于定制线条颜色
@@ -35,7 +32,7 @@ def plot_chart(data, title):
         type='candle',
         mav=(7, 30, 60),
         volume=True,
-        title='\nstock %s k线图' % (symbol),
+        title='\nstock_info %s k线图' % (symbol),
         ylabel='价格',
         ylabel_lower='交易量',
         figratio=(15, 10),

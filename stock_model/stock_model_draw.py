@@ -1,4 +1,4 @@
-import fund_info.stock_k_line as kline
+import stock_info.stock_k_line as kline
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import pandas as pd

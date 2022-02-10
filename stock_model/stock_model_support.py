@@ -1,4 +1,4 @@
-import fund_info.stock_k_line as kline
+import stock_info.stock_k_line as kline
 import matplotlib.pyplot as plt
 import pandas as pd
 import talib
