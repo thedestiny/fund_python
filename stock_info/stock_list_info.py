@@ -44,6 +44,11 @@ def query_stock_list():
         code, name = node["f12"], node["f14"]
         print(code, name)
 
+def stock_basic_info(code):
+    # 获取股票基本信息
+
+    # http://push2.eastmoney.com/api/qt/stock/get?ut=fa5fd1943c7b386f172d6893dbfba10b&invt=2&fltt=2&fields=f57,f58,f62,f55,f162,f92,f167,f183,f184,f105,f185,f186,f187,f173,f188,f84,f116,f85,f117,f190,f189,f86&secid=0.300949
+    pass
 
 if __name__ == '__main__':
     print("start capture !")
