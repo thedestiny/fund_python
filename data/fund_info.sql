@@ -44,3 +44,34 @@ CREATE TABLE `tb_fund_ext_list` (
   UNIQUE KEY `idx_fund_list_code` (`code`) USING BTREE,
   KEY `idx_fund_list_type` (`code`,`data_type`,`data_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基金扩展信息列表';
+
+
+CREATE TABLE `tb_stock_list` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `code` varchar(6) NOT NULL DEFAULT '' COMMENT 'stock代码',
+  `name` varchar(100) DEFAULT '' COMMENT 'stock名称',
+  `price` decimal(10,2) DEFAULT NULL COMMENT '当前价格',
+  `earnings` decimal(18,4) DEFAULT NULL COMMENT '季度收益',
+  `pe` decimal(18,4) DEFAULT NULL COMMENT '市盈率',
+  `pb` decimal(18,4) DEFAULT NULL COMMENT '市净率',
+  `roe` decimal(18,4) DEFAULT NULL COMMENT '净资产收益率',
+  `net_asset` decimal(18,4) DEFAULT NULL COMMENT '每股净资产',
+  `operating` decimal(18,4) DEFAULT NULL COMMENT '营业收入',
+  `operating_rate` decimal(18,4) DEFAULT NULL COMMENT '营业收入增长比率',
+  `proceeds` decimal(18,4) DEFAULT NULL COMMENT '净利润',
+  `proceeds_rate` decimal(18,4) DEFAULT NULL COMMENT '净利润增长率',
+  `gross` decimal(18,4) DEFAULT NULL COMMENT '毛利率',
+  `net_margin` decimal(18,4) DEFAULT NULL COMMENT '净利率',
+  `debt_ratio` decimal(18,4) DEFAULT NULL COMMENT '负债率',
+  `equity` decimal(18,4) DEFAULT NULL COMMENT '总股本',
+  `total_value` decimal(18,4) DEFAULT NULL COMMENT '总市值',
+  `floating` decimal(18,4) DEFAULT NULL COMMENT '流通股',
+  `flow_value` decimal(18,4) DEFAULT NULL COMMENT '流通值',
+  `und_value` decimal(18,4) DEFAULT NULL COMMENT '未分配利润',
+  `ipo_time` varchar(20) DEFAULT NULL COMMENT '上市时间',
+  `update_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '抓取时间',
+  `q_time` int(11) DEFAULT NULL COMMENT '季报 201806 18年2季报',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_stock_list_code` (`code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8 COMMENT='stock 信息列表';
+
