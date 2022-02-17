@@ -13,6 +13,7 @@ use python script gather fund basic information and rate information
 stock_info 股票信息获取相关脚本
   - stock_k_line.py  股票k线数据获取
   - stock_north_hold.py 股票北上资金持仓情况
+  - stock_list_info.py 获取股票信息列表和股票基本信息
   
 fund_info 基金信息获取相关脚本
   - db_executor.py 数据库操作相关脚本
