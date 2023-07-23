@@ -135,10 +135,11 @@ def query_idx_kline_pd(code, start="20200101", end="20300101", klt="101"):
 
 # 处理指数信息
 def handle_index_info():
+    # 获取上证指数和深证指数成交数据
     data_sh, sh_info = query_idx_kline_pd("1.000001")
-    print(data_sh, sh_info)
     data_sz, sz_info = query_idx_kline_pd("0.399106")
     print(data_sz, sz_info)
+    print(data_sh, sh_info)
 
     # 提取数据并重命名字段
     sh_dt = data_sh[["date", "close", "amount", "rate", "turn_rate"]]
