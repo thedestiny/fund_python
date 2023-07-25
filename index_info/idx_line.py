@@ -12,15 +12,14 @@ from matplotlib.pyplot import MultipleLocator
 import arrow
 
 from functools import reduce
-
-plt.rcParams['font.sans-serif'] = ["Arial Unicode MS"]
-# mpl.rcParams['font.sans-serif'] = ["SimHei"]
-# mpl.rcParams['font.sans-serif'] = ["SimHei"]
-
+#  用来正常显示中文标签 Arial Unicode MS mac 系统 SimHei windows 系统
+# plt.rcParams['font.sans-serif'] = ["Arial Unicode MS"]
+plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 # 设置数据的小数位
 pd.set_option('precision', 2)
 pd.set_option('expand_frame_repr', False)
-mpl.rcParams['font.sans-serif'] = ["SimHei"]
+# mpl.rcParams['font.sans-serif'] = ["SimHei"]
 mpl.rcParams["axes.unicode_minus"] = False
 # 单位是inches
 plt.rcParams['figure.figsize'] = (20.0, 8.0)
@@ -137,7 +136,7 @@ def query_idx_kline_pd(code, start="20200101", end="20300101", klt="101"):
 def handle_index_info():
     # 获取上证指数和深证指数成交数据
     data_sh, sh_info = query_idx_kline_pd("1.000001")
-    data_sz, sz_info = query_idx_kline_pd("0.399106")
+    data_sz, sz_info = query_idx_kline_pd("0.399001")
     print(data_sz, sz_info)
     print(data_sh, sh_info)
 
@@ -146,23 +145,25 @@ def handle_index_info():
     sh_dt.rename(columns={"close": "SH收盘", "amount": "SH成交额", "rate": "SH涨跌幅", "turn_rate": "SH换手率"}, inplace=True)
     sz_dt = data_sz[["date", "close", "amount", "rate", "turn_rate"]]
     sz_dt.rename(columns={"close": "SZ收盘", "amount": "SZ成交额", "rate": "SZ涨跌幅", "turn_rate": "SZ换手率"}, inplace=True)
-    # 将上证指数和深证指数数据进行合并，并将成交额进行转换
+    # 将上证指数和深证指数数据进行合并，并将成交额进行转换，原成交额单位是元，需要转换成亿元
     mg_data = pd.merge(sh_dt, sz_dt, how="inner", on="date")
     mg_data["SH成交额"] = mg_data["SH成交额"] / 100_000_000
     mg_data["SZ成交额"] = mg_data["SZ成交额"] / 100_000_000
+
     # 计算总的成交额和换手率
     mg_data["两市成交额"] = (mg_data["SH成交额"] + mg_data["SZ成交额"])
-    mg_data["两市换手"] = (mg_data["SH成交额"] * mg_data["SH换手率"] + mg_data["SZ成交额"] * mg_data["SZ换手率"]) / mg_data["两市成交额"]
-
+    # 两市成交总额 / (上证市值 + 深证市值)
+    mg_data["两市换手"] = mg_data["两市成交额"] / (mg_data["SH成交额"] / mg_data["SH换手率"] + mg_data["SZ成交额"] / mg_data["SZ换手率"])
+    # 设置数据位数
     mg_data.round({"SH收盘": 1, "SZ收盘": 1})
     # 日期转字符串，提取年份和日期
     mg_data['year'] = mg_data['date'].apply(lambda x: x.strftime('%Y%m%d')[:4])
     mg_data['date'] = mg_data['date'].apply(lambda x: x.strftime('%Y%m%d')[2:])
-
+    # 提取需要展示IDE字段
     plot_data = mg_data[["date", "两市成交额", "两市换手"]]
     # p_dat = plot_data.set_index('date', inplace=False)
     # print(p_dat)
-    # 提取22年以来的数据
+    # 提取22年以来的数据，结果数据过多的问题
     p_dat = plot_data[plot_data.date > "220101"]
     # 删除原有索引并且进行替换
     p_dat.reset_index(drop=True, inplace=True)
@@ -179,24 +180,19 @@ def handle_index_info():
     plt.xticks(xticks, labels, rotation='0')
     plt.show()
 
-    print(mg_data)
+    print(plot_data)
+
+    # 简单的导出方式，不能进行单元格的设置
     # mg_data.to_excel("data-历史交易统计.xlsx", index=True, header=True, sheet_name="dt1")
 
+    # 创建一个 excel
     writer = pd.ExcelWriter("data-历史交易统计.xlsx", engine="xlsxwriter")
     mg_data.to_excel(writer, index=False, header=True, sheet_name="dt1")
+    # 设置表格 sheet
     work_sht = writer.sheets["dt1"]
-    work_sht.set_column("A:A", 10)
-    work_sht.set_column("B:B", 12)
-    work_sht.set_column("C:C", 12)
-    work_sht.set_column("D:D", 12)
-    work_sht.set_column("E:E", 12)
-    work_sht.set_column("F:F", 12)
-    work_sht.set_column("G:G", 12)
-    work_sht.set_column("H:H", 12)
-    work_sht.set_column("I:I", 12)
-    work_sht.set_column("J:J", 15)
-    work_sht.set_column("K:K", 15)
-    work_sht.set_column("L:L", 10)
+    # 设置表格宽度
+    work_sht.set_column("A:L", 10)
+    # work_sht.set_column("B:B", 12)
     writer.save()
 
 
