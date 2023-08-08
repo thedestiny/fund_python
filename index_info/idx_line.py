@@ -13,8 +13,8 @@ import arrow
 
 from functools import reduce
 #  用来正常显示中文标签 Arial Unicode MS mac 系统 SimHei windows 系统
-# plt.rcParams['font.sans-serif'] = ["Arial Unicode MS"]
-plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['font.sans-serif'] = ["Arial Unicode MS"]
+# plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 # 设置数据的小数位
 pd.set_option('precision', 2)
@@ -23,6 +23,12 @@ pd.set_option('expand_frame_repr', False)
 mpl.rcParams["axes.unicode_minus"] = False
 # 单位是inches
 plt.rcParams['figure.figsize'] = (20.0, 8.0)
+
+# 配置信息
+pd.set_option('display.max_columns', 20)  # 显示所有列
+pd.set_option('display.max_rows', 20)  # 显示所有行
+pd.set_option('display.width', 30)  # 自动调整列宽
+pd.set_option('display.max_colwidth', 30)  # 显示所有单元格的内容
 
 # 东方财富数据访问接口
 east_server = "http://54.push2his.eastmoney.com/api/qt/stock/kline/get"
@@ -136,7 +142,7 @@ def query_idx_kline_pd(code, start="20200101", end="20300101", klt="101"):
 def handle_index_info():
     # 获取上证指数和深证指数成交数据
     data_sh, sh_info = query_idx_kline_pd("1.000001")
-    data_sz, sz_info = query_idx_kline_pd("0.399001")
+    data_sz, sz_info = query_idx_kline_pd("0.399106")
     print(data_sz, sz_info)
     print(data_sh, sh_info)
 
@@ -145,15 +151,13 @@ def handle_index_info():
     sh_dt.rename(columns={"close": "SH收盘", "amount": "SH成交额", "rate": "SH涨跌幅", "turn_rate": "SH换手率"}, inplace=True)
     sz_dt = data_sz[["date", "close", "amount", "rate", "turn_rate"]]
     sz_dt.rename(columns={"close": "SZ收盘", "amount": "SZ成交额", "rate": "SZ涨跌幅", "turn_rate": "SZ换手率"}, inplace=True)
-    # 将上证指数和深证指数数据进行合并，并将成交额进行转换，原成交额单位是元，需要转换成亿元
+    # 将上证指数和深证指数数据进行合并，并将成交额进行转换
     mg_data = pd.merge(sh_dt, sz_dt, how="inner", on="date")
     mg_data["SH成交额"] = mg_data["SH成交额"] / 100_000_000
     mg_data["SZ成交额"] = mg_data["SZ成交额"] / 100_000_000
-
     # 计算总的成交额和换手率
     mg_data["两市成交额"] = (mg_data["SH成交额"] + mg_data["SZ成交额"])
-    # 两市成交总额 / (上证市值 + 深证市值)
-    mg_data["两市换手"] = mg_data["两市成交额"] / (mg_data["SH成交额"] / mg_data["SH换手率"] + mg_data["SZ成交额"] / mg_data["SZ换手率"])
+    mg_data["两市换手"] = (mg_data["SH成交额"] * mg_data["SH换手率"] + mg_data["SZ成交额"] * mg_data["SZ换手率"]) / mg_data["两市成交额"]
     # 设置数据位数
     mg_data.round({"SH收盘": 1, "SZ收盘": 1})
     # 日期转字符串，提取年份和日期
@@ -180,12 +184,13 @@ def handle_index_info():
     plt.xticks(xticks, labels, rotation='0')
     plt.show()
 
-    print(plot_data)
 
-    # 简单的导出方式，不能进行单元格的设置
+    # 排序 plot_data = plot_data.sort_values(by=["date", "销售额"], ascending=[False, False])
+    # 分组 plot_data.groupby(["城市"]).head(5)
+    plot_data = plot_data.sort_values(by=["date"], ascending=[False])
+    print(plot_data.head(20))
     # mg_data.to_excel("data-历史交易统计.xlsx", index=True, header=True, sheet_name="dt1")
 
-    # 创建一个 excel
     writer = pd.ExcelWriter("data-历史交易统计.xlsx", engine="xlsxwriter")
     mg_data.to_excel(writer, index=False, header=True, sheet_name="dt1")
     # 设置表格 sheet
