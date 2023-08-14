@@ -12,6 +12,7 @@ from matplotlib.pyplot import MultipleLocator
 import arrow
 
 from functools import reduce
+
 #  用来正常显示中文标签 Arial Unicode MS mac 系统 SimHei windows 系统
 plt.rcParams['font.sans-serif'] = ["Arial Unicode MS"]
 # plt.rcParams['font.sans-serif'] = ['SimHei']
@@ -25,8 +26,8 @@ mpl.rcParams["axes.unicode_minus"] = False
 plt.rcParams['figure.figsize'] = (20.0, 8.0)
 
 # 配置信息
-pd.set_option('display.max_columns', 20)  # 显示所有列
-pd.set_option('display.max_rows', 20)  # 显示所有行
+pd.set_option('display.max_columns', None)  # 显示所有列
+pd.set_option('display.max_rows', None)  # 显示所有行
 pd.set_option('display.width', 30)  # 自动调整列宽
 pd.set_option('display.max_colwidth', 30)  # 显示所有单元格的内容
 
@@ -184,11 +185,10 @@ def handle_index_info():
     plt.xticks(xticks, labels, rotation='0')
     plt.show()
 
-
     # 排序 plot_data = plot_data.sort_values(by=["date", "销售额"], ascending=[False, False])
     # 分组 plot_data.groupby(["城市"]).head(5)
     plot_data = plot_data.sort_values(by=["date"], ascending=[False])
-    print(plot_data.head(20))
+    print(plot_data.head(200))
     # mg_data.to_excel("data-历史交易统计.xlsx", index=True, header=True, sheet_name="dt1")
 
     writer = pd.ExcelWriter("data-历史交易统计.xlsx", engine="xlsxwriter")
@@ -201,6 +201,60 @@ def handle_index_info():
     writer.save()
 
 
+def query_idx(idx, kt, name):
+    data_sh, sh_info = query_idx_kline_pd(idx, klt=kt)
+    data_sh['date'] = data_sh['date'].apply(lambda x: x.strftime('%Y%m'))
+    data_sh = data_sh[['date', 'rate']]
+    data_sh.rename(columns={"rate": name}, inplace=True)
+    return data_sh
+
+# klt  60 小时线
+# klt: 101 日线
+# klt: 102 周线
+# klt: 103 月线
+# klt: 104 季线
+# klt: 105 半年线
+# klt: 106 年线
+def idx_compare(kl='103'):
+    # 获取上证指数和深证指数成交数据
+    # data_sh, sh_info = query_idx_kline_pd("1.000001", klt=kl)
+    # data_sz, sz_info = query_idx_kline_pd("0.399106", klt=kl)
+    #
+    # data_sh['date'] = data_sh['date'].apply(lambda x: x.strftime('%Y%m'))
+    # data_sz['date'] = data_sz['date'].apply(lambda x: x.strftime('%Y%m'))
+    #
+    # data_sz = data_sz[['date', 'rate']]
+    # data_sh = data_sh[['date', 'rate']]
+    #
+    # data_sz.rename(columns={"rate": "SZ指"}, inplace=True)
+    # data_sh.rename(columns={"rate": "SH指"}, inplace=True)
+
+    data_sh = query_idx("1.000001", kl, "SH指")
+    data_sz = query_idx("0.399106", kl, "SZ指")
+    data_300 = query_idx("1.000300", kl, "300")
+    data_50 = query_idx("1.000016", kl, "50指")
+    data_kc = query_idx("1.000688", kl, "科创")
+    data_500 = query_idx("1.000905", kl, "500")
+
+    # data_sh['name'] = "上证指数"
+    # data_sz['name'] = "深证指数"
+
+    # 将上证指数和深证指数数据进行合并，并将成交额进行转换
+    mg_data = pd.merge(data_sh, data_sz, how="inner", on="date")
+    mg_data = pd.merge(mg_data, data_300, how="inner", on="date")
+    mg_data = pd.merge(mg_data, data_50, how="inner", on="date")
+    mg_data = pd.merge(mg_data, data_kc, how="inner", on="date")
+    mg_data = pd.merge(mg_data, data_500, how="inner", on="date")
+
+    mg_data = mg_data.sort_values(by=["date"], ascending=[False]).head(24)
+    mg_data.set_index(['date'], inplace=True)
+
+    mg_result = mg_data.T
+    print(mg_result)
+
+
+
 if __name__ == '__main__':
     print("start index capture !")
-    handle_index_info()
+    idx_compare(kl='103')
+    # handle_index_info()
