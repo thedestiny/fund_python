@@ -256,5 +256,6 @@ def idx_compare(kl='103'):
 
 if __name__ == '__main__':
     print("start index capture !")
-    # idx_compare(kl='103')
-    handle_index_info()
+    #  103 月线 104 季度线 105 半年线 106 年线
+    idx_compare(kl='105')
+    # handle_index_info()
