@@ -256,5 +256,5 @@ def idx_compare(kl='103'):
 
 if __name__ == '__main__':
     print("start index capture !")
-    idx_compare(kl='103')
-    # handle_index_info()
+    # idx_compare(kl='103')
+    handle_index_info()
