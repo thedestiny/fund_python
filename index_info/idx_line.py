@@ -26,10 +26,16 @@ mpl.rcParams["axes.unicode_minus"] = False
 plt.rcParams['figure.figsize'] = (20.0, 8.0)
 
 # 配置信息
-pd.set_option('display.max_columns', None)  # 显示所有列
-pd.set_option('display.max_rows', None)  # 显示所有行
-pd.set_option('display.width', 30)  # 自动调整列宽
-pd.set_option('display.max_colwidth', 30)  # 显示所有单元格的内容
+# pd.set_option('display.max_columns', None)  # 显示所有列
+# pd.set_option('display.max_rows', None)  # 显示所有行
+# pd.set_option('display.width', 30)  # 自动调整列宽
+# pd.set_option('display.max_colwidth', 30)  # 显示所有单元格的内容
+
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', 1000)
+pd.set_option('display.colheader_justify', 'center')
+pd.set_option('display.precision', 2)
 
 # 东方财富数据访问接口
 east_server = "http://54.push2his.eastmoney.com/api/qt/stock/kline/get"
@@ -144,8 +150,8 @@ def handle_index_info():
     # 获取上证指数和深证指数成交数据
     data_sh, sh_info = query_idx_kline_pd("1.000001")
     data_sz, sz_info = query_idx_kline_pd("0.399106")
-    print(data_sz, sz_info)
-    print(data_sh, sh_info)
+    # print(data_sz, sz_info)
+    # print(data_sh, sh_info)
 
     # 提取数据并重命名字段
     sh_dt = data_sh[["date", "close", "amount", "rate", "turn_rate"]]
@@ -166,6 +172,7 @@ def handle_index_info():
     mg_data['date'] = mg_data['date'].apply(lambda x: x.strftime('%Y%m%d')[2:])
     # 提取需要展示IDE字段
     plot_data = mg_data[["date", "两市成交额", "两市换手"]]
+    plot_data["总市值"] = plot_data["两市成交额"] / plot_data["两市换手"] / 100
     # p_dat = plot_data.set_index('date', inplace=False)
     # print(p_dat)
     # 提取22年以来的数据，结果数据过多的问题
@@ -188,7 +195,7 @@ def handle_index_info():
     # 排序 plot_data = plot_data.sort_values(by=["date", "销售额"], ascending=[False, False])
     # 分组 plot_data.groupby(["城市"]).head(5)
     plot_data = plot_data.sort_values(by=["date"], ascending=[False])
-    print(plot_data.head(200))
+    print(plot_data.head(300))
     # mg_data.to_excel("data-历史交易统计.xlsx", index=True, header=True, sheet_name="dt1")
 
     writer = pd.ExcelWriter("data-历史交易统计.xlsx", engine="xlsxwriter")
@@ -207,6 +214,7 @@ def query_idx(idx, kt, name):
     data_sh = data_sh[['date', 'rate']]
     data_sh.rename(columns={"rate": name}, inplace=True)
     return data_sh
+
 
 # klt  60 小时线
 # klt: 101 日线
@@ -250,12 +258,36 @@ def idx_compare(kl='103'):
     mg_data.set_index(['date'], inplace=True)
 
     mg_result = mg_data.T
-    print(mg_result)
+    print(mg_result.head(30))
 
+
+def current_idx():
+    # 获取上证指数和深证指数成交数据
+    data_sh, sh_info = query_idx_kline_pd("1.000001")
+    # 399106
+    data_sz, sz_info = query_idx_kline_pd("0.399001")
+
+    # 提取数据并重命名字段
+    sh_dt = data_sh[["date", "close", "low", "high", "open", "amount", "rate", "turn_rate"]]
+    sz_dt = data_sz[["date", "close", "low", "high", "open", "amount", "rate", "turn_rate"]]
+    sh_c = sh_dt.copy()
+    sz_c = sz_dt.copy()
+
+    sh_c["amount"] = sh_c["amount"] / 100000000
+    sz_c["amount"] = sz_c["amount"] / 100000000
+
+    plot_data = sh_c.sort_values(by=["date"], ascending=[False])
+    print("sh market")
+    print(plot_data.head(2))
+
+    plot_data = sz_c.sort_values(by=["date"], ascending=[False])
+    print("sz market")
+    print(plot_data.head(2))
 
 
 if __name__ == '__main__':
     print("start index capture !")
     #  103 月线 104 季度线 105 半年线 106 年线
-    idx_compare(kl='105')
-    # handle_index_info()
+    # idx_compare(kl='103')
+    handle_index_info()
+    current_idx()
