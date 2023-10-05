@@ -5,7 +5,10 @@ import talib
 from matplotlib.pyplot import MultipleLocator
 import matplotlib as mpl
 
-mpl.rcParams['font.sans-serif'] = ["SimHei"]
+
+# windows  SimHei
+# mac Arial Unicode MS
+mpl.rcParams['font.sans-serif'] = ["Arial Unicode MS"]
 mpl.rcParams["axes.unicode_minus"] = False
 # 单位是inches
 plt.rcParams['figure.figsize'] = (20.0, 8.0)
