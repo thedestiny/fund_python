@@ -37,3 +37,8 @@ trade 交易回测模型
   
 ```
 
+
+```
+python 概率统计
+https://mp.weixin.qq.com/s/3vJzhXkKyQ15_mdpStVG5Q
+```
