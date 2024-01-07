@@ -5,6 +5,7 @@ from prettytable import PrettyTable
 import pandas as pd
 import datetime as dt
 import talib
+import time
 # import stock_list_info as info
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -135,7 +136,7 @@ def query_basic_pd(line_list):
 
 
 # 查询k线数据
-def query_idx_kline_pd(code, start="20200101", end="20300101", klt="101"):
+def query_idx_kline_pd(code, start="20170101", end="20300101", klt="101"):
     """
     查询数据线的k 线图 指数和板块
     """
@@ -241,7 +242,7 @@ def idx_compare(kl='103'):
     data_sz = query_idx("0.399106", kl, "SZ指")
     data_300 = query_idx("1.000300", kl, "300")
     data_50 = query_idx("1.000016", kl, "50指")
-    data_kc = query_idx("1.000688", kl, "科创")
+    # data_kc = query_idx("1.000688", kl, "科创")
     data_500 = query_idx("1.000905", kl, "500")
 
     # data_sh['name'] = "上证指数"
@@ -251,7 +252,7 @@ def idx_compare(kl='103'):
     mg_data = pd.merge(data_sh, data_sz, how="inner", on="date")
     mg_data = pd.merge(mg_data, data_300, how="inner", on="date")
     mg_data = pd.merge(mg_data, data_50, how="inner", on="date")
-    mg_data = pd.merge(mg_data, data_kc, how="inner", on="date")
+    # mg_data = pd.merge(mg_data, data_kc, how="inner", on="date")
     mg_data = pd.merge(mg_data, data_500, how="inner", on="date")
 
     mg_data = mg_data.sort_values(by=["date"], ascending=[False]).head(24)
@@ -276,18 +277,25 @@ def current_idx():
     sh_c["amount"] = sh_c["amount"] / 100000000
     sz_c["amount"] = sz_c["amount"] / 100000000
 
+    show_num = 100
     plot_data = sh_c.sort_values(by=["date"], ascending=[False])
     print("sh market")
-    print(plot_data.head(2))
+    print(plot_data.head(show_num))
 
     plot_data = sz_c.sort_values(by=["date"], ascending=[False])
     print("sz market")
-    print(plot_data.head(2))
+    print(plot_data.head(show_num))
 
 
 if __name__ == '__main__':
     print("start index capture !")
     #  103 月线 104 季度线 105 半年线 106 年线
     # idx_compare(kl='103')
-    handle_index_info()
+    # idx_compare(kl='106')
+    # handle_index_info()
+
     current_idx()
+
+    # while True:
+    #    current_idx()
+    #    time.sleep(5)
