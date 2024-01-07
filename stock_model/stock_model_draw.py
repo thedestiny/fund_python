@@ -103,6 +103,7 @@ def plot_chart(data, title):
 
 
 if __name__ == '__main__':
+
     line_list = kline.query_k_line("600690", "20211001")
 
     date_list, open_list, close_list, high_list, low_list = [], [], [], [], []

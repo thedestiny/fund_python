@@ -2,7 +2,8 @@ import requests
 import json
 import demjson
 from prettytable import PrettyTable
-
+import pandas as pd
+import talib
 
 # 参数请求组装
 def compose_params(code, start="20200101", end="20300101", klt="101"):
@@ -24,7 +25,7 @@ def compose_params(code, start="20200101", end="20300101", klt="101"):
     for key, val in prms.items():
         result = result + key + "=" + val + "&"
     result = result[:-1]
-    print(result)
+    # print(result)
     return result
 
 
@@ -46,9 +47,64 @@ def query_k_line(code, start="20200101", end="20300101", klt="101"):
         arr = node.split(",")
         # 将表格内容放置在 bt 中
         bt.add_row(arr)
-    print(bt)
-    print(kline_data)
+    # print(bt)
+    # print(kline_data)
     return kline_data
+
+
+def query_stock_info(code, sat = "20211001"):
+    """
+    查询股票信息
+    :param code:
+    :param sat:
+    :return:
+    """
+
+    line_list = query_k_line(code, sat)
+
+    date_list, open_list, close_list, high_list, low_list = [], [], [], [], []
+    # 成交量 成交额
+    vol_list, amt_list = [], []
+
+    for node in line_list:
+        arr = node.split(",")
+        date_list.append(arr[0])
+        open_list.append(float(arr[1]))
+        close_list.append(float(arr[2]))
+        high_list.append(float(arr[3]))
+        low_list.append(float(arr[4]))
+        vol_list.append(float(arr[5]))
+        amt_list.append(float(arr[6]))
+
+    # 组装 dataframe 数据
+    data = pd.DataFrame({
+        "Date": date_list,
+        "High": high_list,
+        "Low": low_list,
+        "Open": open_list,
+        "Close": close_list,
+        "Volume": vol_list,
+        "Amount": amt_list
+    })
+
+    # date_series = data['Date']
+    # print(date_series)
+
+    # 计算 macd 数据
+    # talib.MACD(close, fastperiod=12, slowperiod=26, signalperiod=9)
+    data["macd"], data["macd_signal"], data["macd_hist"] = talib.MACD(data['Close'], fastperiod=12, slowperiod=26,
+                                                                      signalperiod=9)
+    # 计算均线数据
+    data["ma5"] = talib.MA(data["Close"], timeperiod=5)
+    data["ma7"] = talib.MA(data["Close"], timeperiod=7)
+    data["ma10"] = talib.MA(data["Close"], timeperiod=10)
+    data["ma20"] = talib.MA(data["Close"], timeperiod=20)
+    data["ma30"] = talib.MA(data["Close"], timeperiod=30)
+    data["ma60"] = talib.MA(data["Close"], timeperiod=60)
+    data["ma120"] = talib.MA(data["Close"], timeperiod=120)
+    data["ma250"] = talib.MA(data["Close"], timeperiod=250)
+
+    return data
 
 
 if __name__ == '__main__':
