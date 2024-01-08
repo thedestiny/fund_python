@@ -62,7 +62,7 @@ def query_stock_info(code, sat = "20211001"):
 
     line_list = query_k_line(code, sat)
 
-    date_list, open_list, close_list, high_list, low_list = [], [], [], [], []
+    date_list, open_list, close_list, high_list, low_list, rate_list = [], [], [], [], [], []
     # 成交量 成交额
     vol_list, amt_list = [], []
 
@@ -75,6 +75,7 @@ def query_stock_info(code, sat = "20211001"):
         low_list.append(float(arr[4]))
         vol_list.append(float(arr[5]))
         amt_list.append(float(arr[6]))
+        rate_list.append(float(arr[8]))
 
     # 组装 dataframe 数据
     data = pd.DataFrame({
@@ -84,7 +85,8 @@ def query_stock_info(code, sat = "20211001"):
         "Open": open_list,
         "Close": close_list,
         "Volume": vol_list,
-        "Amount": amt_list
+        "Amount": amt_list,
+        "Rate" : rate_list
     })
 
     # date_series = data['Date']
