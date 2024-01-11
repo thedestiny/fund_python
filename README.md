@@ -41,4 +41,23 @@ trade 交易回测模型
 ```
 python 概率统计
 https://mp.weixin.qq.com/s/3vJzhXkKyQ15_mdpStVG5Q
+
+# 反转索引
+data = st_line.query_stock_info("603628")
+print(data)
+tmi = data.set_index(data["Date"], drop=True)
+print(tmi)
+tmi.index = range(len(tmi))
+tmi = tmi.reset_index()
+# df[reversed(df.columns)] 反转列名
+# reversed方法时，索引不能重复
+print(tmi)
+tmp = data.set_index("Date", drop=True)
+print(tmp)
+tpm = tmp.reindex(reversed(tmp.index))
+print(tpm)
+dt = data.loc[::-1]
+print(dt)
+handle_stock("603628	清源股份")
+    
 ```
