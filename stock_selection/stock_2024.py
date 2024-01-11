@@ -44,14 +44,14 @@ def handle_stock(node):
             break
     # 80% 的k线在 20日均线之上 且交易量逐渐放大 且 收盘价格逐步上台阶 amt1 > amt3 and  amt1 > amt5 and
     if up / total >= 0.7 and (amt5 > amt20) \
-        and (close1 > close5 and close5 > close20) and rate > 0:
+            and (close1 > close5 and close5 > close20) and rate > 0:
         return 1
     else:
         return 0
 
+
 if __name__ == '__main__':
 
-    handle_stock("603628	清源股份")
     print("start find ma20 stock strategy ! ")
     res_list = []
     # 记录开始时间

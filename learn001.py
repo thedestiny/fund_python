@@ -27,14 +27,25 @@ pad = pd.DataFrame({
     "close": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 })
 
+dat = pad["close"].iloc[8:]
+print(dat)
+
+start_date = pad.index[2]
+ele = pad.loc[start_date]
+print(ele)
+
 dd = pad["close"].shift(1)
 print(dd)
+
+
 
 pad["tmp1"] = pad["close"].shift(1)
 pad["tmp2"] = pad["close"].shift(2)
 pad["tmp3"] = pad["close"].shift(3)
 pad["tmp4"] = pad["close"].shift(4)
 pad["tmp5"] = pad["close"].shift(5)
+
+
 pad["avg"] = (pad["tmp1"] + pad["tmp2"] + pad["tmp3"] + pad["tmp4"] + pad["tmp5"]) / 5
 
 # pad = pad.fillna(-1)
