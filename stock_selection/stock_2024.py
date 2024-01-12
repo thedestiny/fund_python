@@ -12,6 +12,18 @@ def handle_stock(node):
     arr = node.split("\t")
     # 查询股票代码 pandas 数据
     data = st_line.query_stock_info(arr[0])
+    # 计算最近三天是否符合情况
+    for i in range(3):
+        res = handle_data(data)
+        if res == 0:
+            data = data.drop(data.index.size - 1)
+        else:
+            return 1
+    return 0
+
+
+
+def handle_data(data):
     # 获取其日期 收盘价 均线和交易量数据 以及涨跌幅
     handle = data[["Date", "Close", "ma5", "ma10", "ma20", "Amount", "Rate"]]
     hand_srt = handle.sort_values("Date", ascending=False)
@@ -44,10 +56,13 @@ def handle_stock(node):
             break
     # 80% 的k线在 20日均线之上 且交易量逐渐放大 且 收盘价格逐步上台阶 amt1 > amt3 and  amt1 > amt5 and
     if up / total >= 0.7 and (amt5 > amt20) \
-        and (close1 > close5 and close5 > close20) and rate > 0:
+            and (close1 > close5 and close5 > close20) and rate > 0:
         return 1
     else:
         return 0
+
+
+
 
 if __name__ == '__main__':
 
