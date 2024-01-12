@@ -62,11 +62,8 @@ def handle_data(data):
         return 0
 
 
-
-
 if __name__ == '__main__':
 
-    handle_stock("603628	清源股份")
     print("start find ma20 stock strategy ! ")
     res_list = []
     # 记录开始时间

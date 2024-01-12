@@ -277,7 +277,7 @@ def current_idx():
     sh_c["amount"] = sh_c["amount"] / 100000000
     sz_c["amount"] = sz_c["amount"] / 100000000
 
-    show_num = 100
+    show_num = 4
     plot_data = sh_c.sort_values(by=["date"], ascending=[False])
     print("sh market")
     print(plot_data.head(show_num))
@@ -296,6 +296,6 @@ if __name__ == '__main__':
 
     current_idx()
 
-    # while True:
+    # while True:f
     #    current_idx()
     #    time.sleep(5)
