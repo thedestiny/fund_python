@@ -18,9 +18,8 @@ def handle_stock(node):
         if res == 0:
             data = data.drop(data.index.size - 1)
         else:
-            return 1
+            return 1 + i
     return 0
-
 
 
 def handle_data(data):
@@ -76,8 +75,8 @@ if __name__ == '__main__':
         for node in code_list:
             try:
                 res = handle_stock(node)
-                if res == 1:
-                    res_list.append(node)
+                if res >= 1:
+                    res_list.append("{}\t{}".format(res, node))
             except Exception as e:
                 print("error ", node, e)
     # 记录结束时间
@@ -85,8 +84,9 @@ if __name__ == '__main__':
     st_str = dt.datetime.strftime(end, "%Y-%m-%d %H:%M:%S")
     # 文件名称
     file_name = dt.datetime.strftime(dt.datetime.now(), "%Y%m%d%H%M%S")
+    res_list.sort()
     # 写入寻找到的代码，并打印结果
     with open("./{}.txt".format(file_name), encoding="utf8", mode="a+") as f:
         for ele in res_list:
             f.write(ele)
-            print(ele)
+            # print(ele)
