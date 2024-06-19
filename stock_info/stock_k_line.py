@@ -111,4 +111,6 @@ def query_stock_info(code, sat = "20211001"):
 
 if __name__ == '__main__':
     print("start capture !")
-    query_k_line("300059")
+    # todo stock
+    ele = query_k_line("300059")
+    print(ele)

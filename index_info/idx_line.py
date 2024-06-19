@@ -290,6 +290,8 @@ def current_idx():
 if __name__ == '__main__':
     print("start index capture !")
     #  103 月线 104 季度线 105 半年线 106 年线
+
+    query_idx_kline_pd("0.300059")
     idx_compare(kl='103')
     # idx_compare(kl='106')
     # handle_index_info()
