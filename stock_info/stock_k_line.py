@@ -5,6 +5,7 @@ from prettytable import PrettyTable
 import pandas as pd
 import talib
 
+
 # 参数请求组装
 def compose_params(code, start="20200101", end="20300101", klt="101"):
     tmp = "0." + code
@@ -52,7 +53,37 @@ def query_k_line(code, start="20200101", end="20300101", klt="101"):
     return kline_data
 
 
-def query_stock_info(code, sat = "20211001"):
+def query_stock_pandas(code, sat="20200101"):
+
+    line_list = query_k_line(code, sat)
+    date_list, open_list, close_list, high_list, low_list, rate_list = [], [], [], [], [], []
+    # 成交量 成交额
+    vol_list, amt_list = [], []
+    for node in line_list:
+        arr = node.split(",")
+        date_list.append(arr[0])
+        open_list.append(float(arr[1]))
+        close_list.append(float(arr[2]))
+        high_list.append(float(arr[3]))
+        low_list.append(float(arr[4]))
+        vol_list.append(float(arr[5]))
+        amt_list.append(float(arr[6]))
+        rate_list.append(float(arr[8]))
+    # 组装 dataframe 数据
+    data = pd.DataFrame({
+        "Date": date_list,
+        "High": high_list,
+        "Low": low_list,
+        "Open": open_list,
+        "Close": close_list,
+        "Volume": vol_list,
+        "Amount": amt_list,
+        "Rate": rate_list
+    })
+    return data
+
+
+def query_stock_info(code, sat="20211001"):
     """
     查询股票信息
     :param code:
@@ -86,7 +117,7 @@ def query_stock_info(code, sat = "20211001"):
         "Close": close_list,
         "Volume": vol_list,
         "Amount": amt_list,
-        "Rate" : rate_list
+        "Rate": rate_list
     })
 
     # date_series = data['Date']
