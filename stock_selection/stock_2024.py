@@ -77,6 +77,9 @@ if __name__ == '__main__':
                 res = handle_stock(node)
                 if res >= 1:
                     res_list.append("{}\t{}".format(res, node))
+                    with open("./{}.txt".format("tmp_list"), encoding="utf8", mode="w") as f:
+                        for ele in res_list:
+                            f.write(ele)
             except Exception as e:
                 print("error ", node, e)
     # 记录结束时间
