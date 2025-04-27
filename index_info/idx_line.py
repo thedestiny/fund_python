@@ -296,7 +296,7 @@ if __name__ == '__main__':
     # idx_compare(kl='106')
     # handle_index_info()
 
-    current_idx()
+    #current_idx()
 
     # while True:f
     #    current_idx()

@@ -20,6 +20,8 @@ class stock_model(object):
         self.period = 30
         # 周期
         self.type = "d"
+        # 类型 etf stock
+
 
     # 参数请求组装
     def compose_params(self, code, start="20200101", end="20300101", klt="101"):
