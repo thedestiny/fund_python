@@ -198,8 +198,9 @@ def handle_index_info():
     plot_data = plot_data.sort_values(by=["date"], ascending=[False])
     print(plot_data.head(300))
     # mg_data.to_excel("data-历史交易统计.xlsx", index=True, header=True, sheet_name="dt1")
-
-    writer = pd.ExcelWriter("data-历史交易统计.xlsx", engine="xlsxwriter")
+    start = dt.datetime.now()
+    st_str = dt.datetime.strftime(start, "%Y%m%d%H%M%S")
+    writer = pd.ExcelWriter("data-历史交易统计-{}.xlsx".format(st_str), engine="xlsxwriter")
     mg_data.to_excel(writer, index=False, header=True, sheet_name="dt1")
     # 设置表格 sheet
     work_sht = writer.sheets["dt1"]
@@ -294,7 +295,7 @@ if __name__ == '__main__':
     query_idx_kline_pd("0.300059")
     idx_compare(kl='103')
     # idx_compare(kl='106')
-    # handle_index_info()
+    handle_index_info()
 
     current_idx()
 
