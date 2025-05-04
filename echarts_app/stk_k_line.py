@@ -42,7 +42,8 @@ def query_k_line(code, start="20200101", end="20300101", klt="101"):
     kline_data = json_data["klines"]
     # 创建一个对象 PrettyTable 用于打印输出结果
     bt = PrettyTable()
-    title_list = ["时间", "开盘", "收盘", "最高", "最低", "成交量", "成交额", "振幅", "涨跌幅", "涨跌额", "换手率"]
+    title_list = ["时间", "开盘", "收盘", "最高", "最低", "成交量",
+                  "成交额", "振幅", "涨跌幅", "涨跌额", "换手率"]
     bt.field_names = title_list
     for node in kline_data:
         arr = node.split(",")
@@ -53,10 +54,21 @@ def query_k_line(code, start="20200101", end="20300101", klt="101"):
     return kline_data
 
 
-def query_stock_pandas(code, sat="20200101"):
+
+
+
+
+
+
+
+
+
+
+def query_stock_pandas(code, sat="20240101"):
 
     line_list = query_k_line(code, sat)
-    date_list, open_list, close_list, high_list, low_list, rate_list = [], [], [], [], [], []
+    date_list, open_list, close_list, high_list,\
+    low_list, rate_list = [], [], [], [], [], []
     # 成交量 成交额
     vol_list, amt_list = [], []
     for node in line_list:

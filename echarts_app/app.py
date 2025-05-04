@@ -14,6 +14,7 @@ app.config['JSON_AS_ASCII'] = False
 
 
 import logging
+import echarts_utils as utils
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -24,7 +25,13 @@ def index():
     首页加载
     """
     logger.debug("这是一个debug消息")
+
     return render_template("index.html")
+
+@app.route("/stock/data")
+def stock_data():
+    res = utils.query_future("600519", "贵州茅台")
+    return res.dump_options_with_quotes()
 
 if __name__ == "__main__":
     app.run(debug=True, port= 9070)

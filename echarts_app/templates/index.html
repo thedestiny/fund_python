@@ -18,35 +18,68 @@
 
 <div class="container">
 
-    <table class="table table-responsive table-bordered table-striped">
+{#    <table class="table table-responsive table-bordered table-striped">#}
+{##}
+{#        <thead>#}
+{#        <tr>#}
+{#            <th>序号</th>#}
+{#            <th>标题</th>#}
+{#            <th>内容</th>#}
+{#        </tr>#}
+{#        </thead>#}
+{#        <tbody>#}
+{#        <tr>#}
+{#            <td>1</td>#}
+{#            <td>标题</td>#}
+{#            <td>内容</td>#}
+{#        </tr>#}
+{#        </tbody>#}
+{##}
+{#    </table>#}
 
-        <thead>
-        <tr>
-            <th>序号</th>
-            <th>标题</th>
-            <th>内容</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>1</td>
-            <td>标题</td>
-            <td>内容</td>
-        </tr>
-        </tbody>
-
-    </table>
+    <div id="dou_bar" style="width:98%; height:800px; text-align: center;margin: auto; padding-top: 2%"></div>
 
 </div>
-
-
 </body>
 
 <script>
-
+    var chart = echarts.init(document.getElementById('dou_bar'), 'white', {renderer: 'canvas'});
     $(function () {
+        console.info("data !");
+        // 初始化图形
+        chart_app()
+        // 定时任务循环执行数据查询
+        setInterval(chart_app_job, 5000)
 
+        function chart_app_job() {
+            var tim = moment().format('HH:mm');
+            var flag = false
+            if (("09:00" < tim && tim < "11:30")
+                || ("13:00" < tim && tim < "15:00")
+                || ("21:00" < tim && tim < "23:00")) {
+                flag = true
+            }
+            if (flag) {
+                chart_app()
+            }
 
+        }
+        function chart_app() {
+
+            var code = ""; // $("#sel_variety").val()
+            var name = ""; // document.querySelector('input[name="time"]:checked').value;
+            // var rever = document.querySelector('input[name="rever"]:checked').value;
+            // var tol = document.querySelector('input[name="tol"]:checked').value;
+            $.ajax({
+                type: "GET",
+                url: "/stock/data?name=" + name + "&code=" + code,
+                dataType: 'json',
+                success: function (result) {
+                    console.info(result)
+                    chart.setOption(result);
+                }
+            });
+        }
 
     })
 
